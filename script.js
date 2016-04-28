@@ -111,7 +111,7 @@ winner();
 		removeListeners();
 		var elm = document.getElementById("o-score");
 		elm.innerHTML = parseInt(elm.innerHTML) + 1;
-		oWinsLog();		
+		createLog("o-wins");		
 		}
 		else {
 		switcher = document.getElementById("player-x-ready");
@@ -126,7 +126,7 @@ winner();
 		switcher = document.getElementById("player-o-ready");
 		addClass(switcher, "hidden");
 		removeClass(switcher, "visible");	
-		xWinsLog();						
+		createLog("x-wins");					
 		}
 
 	}
@@ -140,7 +140,7 @@ winner();
 		switcher = document.getElementById("player-x-ready");
 		addClass(switcher, "hidden");
 		removeClass(switcher, "visible");	
-		catsLog();	
+		createLog("cat's game");	
 	}	
 	turn++;
 	move++;
@@ -236,37 +236,21 @@ function newGame() {
 	turnSwitch(turn);
 }
 
-function catsLog() {
-	var node = document.createElement("LI");                 
-	var textnode = document.createTextNode("Cat's game (tie)");         
-	node.appendChild(textnode);
-	document.getElementById("game-log").appendChild(node);  
 
-}	
 
-function xWinsLog() {
-	var node = document.createElement("LI");                 
-	var textnode = document.createTextNode("Player X won");         
-	node.appendChild(textnode);
-	document.getElementById("game-log").appendChild(node);  
 
-}
-
-function oWinsLog() {
-	var node = document.createElement("LI");                 
-	var textnode = document.createTextNode("Player O won");         
-	node.appendChild(textnode);
-	document.getElementById("game-log").appendChild(node);  
-
-}
 
 function emptyList() {
 	var list = document.getElementById("game-log");
-	debugger;
 	while (list.hasChildNodes()) {   
     list.removeChild(list.firstChild);
    }
 }
 
-
+function createLog(textMessage) {
+	var node = document.createElement("LI");                 
+	var textnode = document.createTextNode(textMessage);         
+	node.appendChild(textnode);
+	document.getElementById("game-log").appendChild(node);	
+}
 
