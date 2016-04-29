@@ -17,7 +17,6 @@ function setUpPage () {
 	elm.innerHTML = 0;
 	var elm = document.getElementById("o-score");
 	elm.innerHTML = 0;	
-
 };
 
 var move = 0;
@@ -27,7 +26,6 @@ var win = false;
 var symbol = "";
 var board = [["","",""],["","",""],["","",""]];
 
-
 function addClass(el, className){
 	el.classList.add(className);
 }
@@ -36,39 +34,40 @@ function removeClass(el, className){
 	el.classList.remove(className);
 }
 
+function switchToVisible(message) {
+		switcher = document.getElementById(message);
+		removeClass(switcher, "hidden");
+		addClass(switcher, "visible");	
+}
+
+function switchToHidden(message) {
+		switcher = document.getElementById(message);
+		removeClass(switcher, "visible");
+		addClass(switcher, "hidden");	
+}
+
 function turnSwitch(move) {
 	if (move % 2 === 1) {
-		switcher = document.getElementById("player-o-ready");
-		removeClass(switcher, "hidden");
-		addClass(switcher, "visible");
-		switcher = document.getElementById("player-x-ready");
-		removeClass(switcher, "visible");
-		addClass(switcher, "hidden");
+		switchToVisible("player-o-ready");
+		switchToHidden("player-x-ready");
 	}
 	else {
-		switcher = document.getElementById("player-o-ready");
-		addClass(switcher, "hidden");
-		removeClass(switcher, "visible");
-		switcher = document.getElementById("player-x-ready");
-		removeClass(switcher, "hidden");
-		addClass(switcher, "visible");
+		switchToVisible("player-x-ready");
+		switchToHidden("player-o-ready");
 	}
 }
 
-function selectMove() {
-
+function assignSymbol() {
 	if (turn % 2 === 1) {
 		symbol = "O";
 	}
 	else {
 		symbol = "X";
-	}
-	this.innerHTML = symbol;
+	}	
+}
 
-
-
-  //Populate array
-  switch(this.id) {
+function populateArray(assign) {
+switch(assign) {
     case "tile-1-1":
       board[0][0] = symbol;
       break;
@@ -96,49 +95,41 @@ function selectMove() {
     case "tile-3-3":
       board[2][2] = symbol;
       break;
-  }
+  }	
+}
 
-winner();
+function updateScore(message) {
+	var elm = document.getElementById(message);
+	elm.innerHTML = parseInt(elm.innerHTML) + 1;	
+}
+
+function selectMove() {
+	assignSymbol();
+	this.innerHTML = symbol;
+	populateArray(this.id);
+	checkForWinner();
 
 	if (win) {
 		if (turn % 2 === 1){
-		switcher = document.getElementById("player-o-ready");
-		addClass(switcher, "hidden");
-		removeClass(switcher, "visible");
-		switcher = document.getElementById("player-o-wins");
-		removeClass(switcher, "hidden");
-		addClass(switcher, "visible");
-		removeListeners();
-		var elm = document.getElementById("o-score");
-		elm.innerHTML = parseInt(elm.innerHTML) + 1;
-		createLog("o-wins");		
+			switchToHidden("player-o-ready");
+			switchToVisible("player-o-wins");
+			removeListeners();
+			updateScore("o-score");
+			createLog("o-wins");		
 		}
 		else {
-		switcher = document.getElementById("player-x-ready");
-		addClass(switcher, "hidden");
-		removeClass(switcher, "visible");	
-		switcher = document.getElementById("player-x-wins");
-		removeClass(switcher, "hidden");
-		addClass(switcher, "visible");	
-		removeListeners();
-		var elm = document.getElementById("x-score");
-		elm.innerHTML = parseInt(elm.innerHTML) + 1;
-		switcher = document.getElementById("player-o-ready");
-		addClass(switcher, "hidden");
-		removeClass(switcher, "visible");	
-		createLog("x-wins");					
+			switchToHidden("player-x-ready");
+			switchToVisible("player-x-wins");
+			removeListeners();
+			updateScore("x-score");
+			createLog("x-wins");				
 		}
 
 	}
 	else if (move === 8) {
-		switcher = document.getElementById("tie-game");
-		removeClass(switcher, "hidden");
-		addClass(switcher, "visible");
-		switcher = document.getElementById("player-o-ready");
-		addClass(switcher, "hidden");
-		removeClass(switcher, "visible");
-		switcher = document.getElementById("player-x-ready");
-		addClass(switcher, "hidden");
+		switchToVisible("tie-game");
+		switchToHidden("player-x-ready");
+		switchToHidden("player-o-ready");
 		removeClass(switcher, "visible");	
 		createLog("cat's game");	
 	}	
@@ -151,7 +142,7 @@ winner();
 }
 
 
-function winner() {
+function checkForWinner() {
   win =     board[0][0] === symbol && board[0][1] === symbol && board[0][2] === symbol ||
             board[1][0] === symbol && board[1][1] === symbol && board[1][2] === symbol ||
             board[2][0] === symbol && board[2][1] === symbol && board[2][2] === symbol ||
@@ -176,69 +167,35 @@ function removeListeners() {
 	}
 }
 
-
-
-function reset() {
-	 move = 0;
+function reset() {	
 	 turn = 0;
 	 switcher = "";
-	 win = false;
 	 symbol = "";
-	 board = [["","",""],["","",""],["","",""]];
-	 addListeners();
-	switcher = document.getElementById("player-x-ready");
-	removeClass(switcher, "hidden");
-	addClass(switcher, "visible");
-	switcher = document.getElementById("player-o-ready");
-	removeClass(switcher, "visible");
-	addClass(switcher, "hidden");
-	switcher = document.getElementById("tie-game");
-	removeClass(switcher, "visible");
-	addClass(switcher, "hidden");
-	switcher = document.getElementById("player-x-wins");
-	removeClass(switcher, "visible");
-	addClass(switcher, "hidden");
-	switcher = document.getElementById("player-o-wins");
-	removeClass(switcher, "visible");
-	addClass(switcher, "hidden");
-	emptyList();
-
+	 emptyList();
+	 switchToVisible("player-x-ready");
+	 switchToHidden("player-o-ready");
 	var elm = document.getElementById("x-score");
 	elm.innerHTML = 0;
 	var elm = document.getElementById("o-score");
-	elm.innerHTML = 0;	
-	var elements = document.getElementsByClassName("board-tile");
-	for (var i = 0; i < elements.length; i++) {
-		elements[i].innerHTML = i +1;
-	}
+	elm.innerHTML = 0;
+	newGame();	
 }
 
 function newGame() {
 	 move = 0;
 	 win = false;
-
 	 board = [["","",""],["","",""],["","",""]];
 	 addListeners();	
 	var elements = document.getElementsByClassName("board-tile");
 	for (var i = 0; i < elements.length; i++) {
 		elements[i].innerHTML = i +1;
 	}
-
-	switcher = document.getElementById("tie-game");
-	removeClass(switcher, "visible");
-	addClass(switcher, "hidden");
-	switcher = document.getElementById("player-x-wins");
-	removeClass(switcher, "visible");
-	addClass(switcher, "hidden");
-	switcher = document.getElementById("player-o-wins");
-	removeClass(switcher, "visible");
-	addClass(switcher, "hidden");	
+	switchToHidden("tie-game");
+	switchToHidden("player-x-wins");
+	switchToHidden("player-o-wins");
+	
 	turnSwitch(turn);
 }
-
-
-
-
 
 function emptyList() {
 	var list = document.getElementById("game-log");
